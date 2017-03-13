@@ -51,32 +51,6 @@ proxy:
     links:
         - kubernetes
 
-etcd:
-    image: rancher/etcd:v2.3.7-11
-    labels:
-        io.rancher.scheduler.affinity:host_label_soft: etcd=true
-        io.rancher.scheduler.affinity:container_label_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
-        io.rancher.sidekicks: data
-    environment:
-        RANCHER_DEBUG: 'true'
-        EMBEDDED_BACKUPS: '${EMBEDDED_BACKUPS}'
-        BACKUP_PERIOD: '${BACKUP_PERIOD}'
-        BACKUP_RETENTION: '${BACKUP_RETENTION}'
-    volumes:
-    - etcd:/pdata
-    - /var/etcd/backups:/data-backup
-    volumes_from:
-    - data
-
-data:
-    image: busybox
-    entrypoint: /bin/true
-    net: none
-    volumes:
-    - /data
-    labels:
-        io.rancher.container.start_once: 'true'
-
 kubernetes:
     labels:
         io.rancher.scheduler.affinity:host_label_soft: orchestration=true
@@ -86,7 +60,7 @@ kubernetes:
     command:
         - kube-apiserver
         - --service-cluster-ip-range=10.43.0.0/16
-        - --etcd-servers=http://etcd.kubernetes.rancher.internal:2379
+        - --etcd-servers=http://172.18.204.41:2379
         - --insecure-bind-address=0.0.0.0
         - --insecure-port=80
         - --cloud-provider=${CLOUD_PROVIDER}
@@ -99,8 +73,6 @@ kubernetes:
     environment:
         KUBERNETES_URL: https://kubernetes.kubernetes.rancher.internal:6443
     image: rancher/k8s:v1.5.2-rancher1-4
-    links:
-        - etcd
 
 kube-hostname-updater:
     net: container:kubernetes
