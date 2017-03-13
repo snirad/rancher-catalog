@@ -35,24 +35,6 @@
     required: false
     default: ""
     type: string
-  - variable: EMBEDDED_BACKUPS
-    label: Enable Backups
-    description: "Periodically backup state to /var/etcd/backups. Mount network storage here on all hosts before continuing"
-    required: true
-    default: true
-    type: boolean
-  - variable: BACKUP_PERIOD
-    label: Backup Creation Period
-    description: Create a backup after this amount of time passes. Must conform to duration format
-    required: true
-    default: 15m0s
-    type: string
-  - variable: BACKUP_RETENTION
-    label: Backup Retention Period
-    description: Expire a backup after this amount of time passes. Must conform to duration format
-    required: true
-    default: 24h
-    type: string
 
 kubernetes:
     metadata:
@@ -66,23 +48,6 @@ kubernetes:
         unhealthy_threshold: 3
         healthy_threshold: 2
     retain_ip: true
-
-etcd:
-    retain_ip: true
-    scale_policy:
-        increment: 1
-        max: 3
-        min: 1
-    health_check:
-        port: 2378
-        request_line: GET /health HTTP/1.0
-        interval: 5000
-        response_timeout: 3000
-        unhealthy_threshold: 3
-        healthy_threshold: 2
-        recreate_on_quorum_strategy_config:
-            quorum: 2
-        strategy: recreateOnQuorum
 
 rancher-kubernetes-agent:
     health_check:
